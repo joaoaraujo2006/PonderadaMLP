@@ -1,5 +1,5 @@
 import numpy as np
-from mlp.activations import relu, softmax
+from mlp.activations import relu, relu_derivative, softmax
 
 
 class MLP:
@@ -34,6 +34,25 @@ class MLP:
             self.a_values.append(A)
 
         return A
+
+    def backward(self, y_true):
+        N = y_true.shape[0]
+        grads_W = [None] * self.num_layers
+        grads_b = [None] * self.num_layers
+
+        # Gradiente combinado softmax + cross-entropy: ŷ - y
+        delta = self.a_values[-1] - y_true
+
+        for i in reversed(range(self.num_layers)):
+            grads_W[i] = self.a_values[i].T @ delta / N
+            grads_b[i] = np.mean(delta, axis=0, keepdims=True)
+
+            if i > 0:
+                # Regra da cadeia: propaga delta para a camada anterior
+                # @ propaga pelo peso, * aplica derivada da ReLU element-wise
+                delta = delta @ self.weights[i].T * relu_derivative(self.z_values[i - 1])
+
+        return grads_W, grads_b
 
     def predict(self, X):
         probs = self.forward(X)
