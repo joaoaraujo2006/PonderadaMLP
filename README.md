@@ -3,9 +3,24 @@
 **Nome:** João Pedro Gonçalves Corrêa Araujo
 **Turma:** T16 - Eng Comp
 
-# Criando um MLP do zero
+### Objetivo da Atividade
 
-O primeiro passo antes de construirmos uma MLP do zero, é entendermos como funciona uma MLP e como construir esse entendimento. O objetivo é entender a matemática por trás de 
+Implementar um Multi-Layer Perceptron do zero, usando apenas NumPy. Sem PyTorch, TensorFlow ou qualquer framework de deep learning,cada operação de forward pass, backpropagation e atualização de pesos foi escrita manualmente.
+
+### Criando um MLP do zero
+
+O primeiro passo antes de construirmos uma MLP do zero, é entendermos como funciona uma MLP e como construir esse entendimento. O objetivo é entender a matemática por trás do Perpeptron e da criação de várias camadas. 
+
+### O que é um Perceptron?
+
+O Perceptron é o precursor de tudo que chamamos de rede neural hoje. Ele foi inspirado no funcionamento de um neurônio biológico: recebe sinais, decide se deve "disparar" ou não, e propaga essa decisão adiante.
+
+Na sua forma mais simples, o Perceptron é um classificador. Ele recebe um vetor de entradas `x`, multiplica cada entrada por um peso `w`, soma tudo e aplica uma função degrau:
+
+
+**A limitação do Perceptron simples:** ele só consegue separar dados linearmente separáveis. O problema clássico que expôs essa limitação foi o XOR, quatro pontos que nenhuma linha reta consegue separar em duas classes. Isso travou o campo por quase duas décadas, até que a combinação de múltiplas camadas e backpropagation resolveu o problema.
+
+É exatamente aí que entra o **Multi-Layer Perceptron (MLP)**: ao empilhar vários perceptrons em camadas e conectá-los, a rede consegue aprender fronteiras de decisão não-lineares, representando funções arbitrariamente complexas.
 
 ### O que é um neurônio?
 
@@ -16,7 +31,7 @@ z = W · x + b
 a = f(z)
 ```
 
-Onde `W` são os pesos, `x` é a entrada, `b` é o viés e `f` é a função de ativação. Isoladamente, um neurônio não faz nada impressionante — é a composição de muitos deles em camadas que cria a capacidade de aprender padrões complexos.
+Onde **W** são os pesos, **x** é a entrada, **b** é o viés e **f** é a função de ativação. Isoladamente, um neurônio não faz nada impressionante — é a composição de muitos deles em camadas que cria a capacidade de aprender padrões complexos.
 
 ### Forward Pass: propagando a informação
 
@@ -61,9 +76,7 @@ W = W - taxa_aprendizado * dW
 
 Em vez de calcular o gradiente com todos os dados de uma vez (o que seria lento), usamos mini-batches: pequenos subconjuntos dos dados a cada passo. Isso torna o treinamento mais rápido e o gradiente mais ruidoso, o que paradoxalmente ajuda a rede a escapar de mínimos locais ruins.
 
----
 
-Implementação de um Multi-Layer Perceptron do zero, usando apenas NumPy. Sem PyTorch, TensorFlow ou qualquer framework de deep learning — cada operação de forward pass, backpropagation e atualização de pesos foi escrita manualmente.
 
 
 ## Como rodar
