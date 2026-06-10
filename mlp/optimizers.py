@@ -11,7 +11,7 @@ class SGD:
             rede.biases[i]  -= self.taxa_aprendizado * grads_b[i]
 
 
-def treinar(rede, otimizador, funcao_perda, X, y, epocas=20, tamanho_lote=64):
+def treinar(rede, otimizador, funcao_perda, X, y, epocas=100, tamanho_lote=64):
     historico = {'perda': [], 'acuracia': []}
     N = X.shape[0]
 
