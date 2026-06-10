@@ -1,8 +1,70 @@
-# MLP do Zero — Classificação de Dígitos MNIST
+# Informações Gerais
+
+**Nome:** João Pedro Gonçalves Corrêa Araujo
+**Turma:** T16 - Eng Comp
+
+# Criando um MLP do zero
+
+O primeiro passo antes de construirmos uma MLP do zero, é entendermos como funciona uma MLP e como construir esse entendimento. O objetivo é entender a matemática por trás de 
+
+### O que é um neurônio?
+
+Um neurônio artificial é uma função simples: ele recebe entradas, multiplica cada uma por um peso, soma tudo, adiciona um viés e passa o resultado por uma função de ativação. Em notação matemática:
+
+```
+z = W · x + b
+a = f(z)
+```
+
+Onde `W` são os pesos, `x` é a entrada, `b` é o viés e `f` é a função de ativação. Isoladamente, um neurônio não faz nada impressionante — é a composição de muitos deles em camadas que cria a capacidade de aprender padrões complexos.
+
+### Forward Pass: propagando a informação
+
+O forward pass é o processo de passar os dados de entrada pela rede camada por camada até obter uma predição. Cada camada aplica a operação `a = f(W · a_anterior + b)`, e a saída de uma camada vira a entrada da próxima. Na camada final, usamos softmax para converter os valores em probabilidades:
+
+```
+softmax(z)ᵢ = exp(zᵢ) / Σ exp(zⱼ)
+```
+
+Isso garante que as saídas somem 1 e possam ser interpretadas como "a probabilidade de ser o dígito X".
+
+### Função de Perda: medindo o erro
+
+Após o forward pass, precisamos medir o quanto a predição errou. Para classificação, usamos a cross-entropy:
+
+```
+L = -Σ yᵢ · log(ŷᵢ)
+```
+
+Onde `y` é o label correto (one-hot) e `ŷ` é a probabilidade predita. Quanto mais confiante a rede está no rótulo errado, maior a perda.
+
+### Backpropagation: aprendendo com o erro
+
+O backpropagation é a aplicação da regra da cadeia do cálculo para propagar o gradiente da perda de volta para cada peso da rede. A intuição é: se um peso contribuiu para o erro, ele deve ser ajustado proporcionalmente a essa contribuição.
+
+Uma simplificação matemática muito elegante surge quando combinamos softmax com cross-entropy: o gradiente da camada de saída é simplesmente `ŷ - y`. A partir daí, o gradiente se propaga para trás camada a camada:
+
+```
+dW = a_anterior.T @ delta / N
+delta_anterior = delta @ W.T * ReLU'(z)
+```
+
+O `*` aqui é multiplicação element-wise — cada neurônio recebe apenas o gradiente que lhe corresponde.
+
+### SGD com Mini-batches: atualizando os pesos
+
+Com os gradientes calculados, atualizamos os pesos na direção oposta ao gradiente (descida do gradiente):
+
+```
+W = W - taxa_aprendizado * dW
+```
+
+Em vez de calcular o gradiente com todos os dados de uma vez (o que seria lento), usamos mini-batches: pequenos subconjuntos dos dados a cada passo. Isso torna o treinamento mais rápido e o gradiente mais ruidoso, o que paradoxalmente ajuda a rede a escapar de mínimos locais ruins.
+
+---
 
 Implementação de um Multi-Layer Perceptron do zero, usando apenas NumPy. Sem PyTorch, TensorFlow ou qualquer framework de deep learning — cada operação de forward pass, backpropagation e atualização de pesos foi escrita manualmente.
 
----
 
 ## Como rodar
 
