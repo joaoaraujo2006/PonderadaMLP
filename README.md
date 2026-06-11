@@ -119,9 +119,17 @@ jupyter notebook notebooks/experimentos.ipynb
 
 ### Curva de loss e acurácia
 
+As curvas abaixo mostram o comportamento da rede ao longo de 100 épocas de treinamento no MNIST, com arquitetura `[784, 128, 64, 10]`, `lr=0.01` e `batch=64`.
+
 ![Curvas de treinamento](results/curvas_mnist.png)
 
+A perda cai de forma contínua e suave — sinal de que o gradiente está fluindo corretamente e o learning rate está calibrado. A acurácia cruza a meta de 92% ainda nas primeiras épocas e segue subindo até estabilizar próximo de 99% no treino. A acurácia final no conjunto de teste foi de **97.90%**, confirmando que a rede generalizou bem e não apenas memorizou os dados de treino.
+
+---
+
 ### Tabela comparativa de experimentos
+
+Para entender o impacto de cada hiperparâmetro, treinei quatro configurações variando uma coisa de cada vez em relação ao baseline, todas com 20 épocas.
 
 | Configuração | Acurácia Teste |
 |---|---|
@@ -129,6 +137,8 @@ jupyter notebook notebooks/experimentos.ipynb
 | Maior learning rate lr=0.1 | 97.91% |
 | Rede maior `[784,256,128,10]` lr=0.01 | 96.83% |
 | Lote menor batch=32 | 96.83% |
+
+O resultado mais interessante foi o `lr=0.1`: com o mesmo número de épocas, convergiu mais rápido e chegou a uma acurácia maior que o baseline. A rede maior não superou o baseline em 20 épocas, ela tem mais parâmetros para ajustar e precisaria de mais tempo. O lote menor teve ganho pequeno, provavelmente porque o gradiente mais ruidoso ajudou levemente na generalização.
 
 ## Decisões e dificuldades
 
