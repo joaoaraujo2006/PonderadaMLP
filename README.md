@@ -94,7 +94,6 @@ pip install -r requirements.txt
 jupyter notebook notebooks/experimentos.ipynb
 ```
 
----
 
 ## Arquitetura escolhida
 
@@ -115,11 +114,10 @@ jupyter notebook notebooks/experimentos.ipynb
 - **He initialization:** pesos inicializados com `N(0, √(2/n))` — projetado especificamente para ReLU evitar saturação nas primeiras épocas
 - **128 e 64 neurônios:** capacidade suficiente para aprender as features do MNIST sem overfitting excessivo
 
----
 
 ## Resultados
 
-**Acurácia final no teste:** `XX.XX%` ← preencher após rodar o notebook
+
 
 ### Curva de loss e acurácia
 
@@ -148,19 +146,12 @@ Isso se chama "symmetry breaking problem". Migrei para He initialization (pesos 
 
 ### O que tentei que não funcionou?
 
-<!-- Escreva aqui. Exemplo:
-Tentei usar learning rate 0.1 direto no MNIST. A loss explodiu na segunda época — os gradientes ficaram
-grandes demais e os pesos divergiram. Abaixar para 0.01 resolveu. Também tentei sem normalizar as entradas
-(÷255) e a convergência foi muito mais lenta e instável. -->
+Tentei aumentar a quantidade de épocas 
 
 ### Se fosse refazer do zero, o que faria diferente?
 
-<!-- Escreva aqui. Exemplo:
-Implementaria o gradient check logo após o backprop, antes de qualquer treinamento. Passei tempo procurando
-um bug que estava na multiplicação element-wise da derivada da ReLU — `*` em vez de `@` — e um gradient
-check teria me dado a resposta em segundos. -->
 
----
+
 
 ## Estrutura do repositório
 
