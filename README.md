@@ -75,6 +75,87 @@ W = W - taxa_aprendizado * dW
 
 Em vez de calcular o gradiente com todos os dados de uma vez (o que seria lento), usamos mini-batches: pequenos subconjuntos dos dados a cada passo. Isso torna o treinamento mais rápido e o gradiente mais ruidoso, o que paradoxalmente ajuda a rede a escapar de mínimos locais ruins.
 
+## 2.2 Da teoria ao código
+
+Cada conceito da seção anterior tem uma correspondência direta no código. Esta seção mostra onde cada peça da matemática vive na implementação.
+
+
+### 2.2.1 Neurônio
+
+A operação `z = W · x + b` e `a = f(z)` está no `forward` da classe `MLP`:
+
+```python
+Z = A @ self.weights[i] + self.biases[i]  # z = W · x + b
+A = relu(Z)                                # a = f(z)
+```
+
+Cada iteração do loop percorre uma camada. A última camada usa `softmax` em vez de `relu`.
+
+### 2.2.2 Função de ativação 
+
+Em `activations.py`, criamos as funções que representam a ReLU e sua derivada, usadas no forward e no backprop respectivamente:
+
+```python
+def relu(z):
+    return np.maximum(0, z)        # passa positivos, zera negativos
+
+def relu_derivative(z):
+    return (z > 0).astype(float)  # 1 onde ativou, 0 onde não ativou
+```
+
+A softmax com subtração do máximo evita overflow numérico:
+
+```python
+def softmax(z):
+    shift = z - np.max(z, axis=1, keepdims=True)  # estabilidade numérica
+    exp_z = np.exp(shift)
+    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+```
+
+
+### 2.2.3 Função de perda 
+
+Já em `losses.py`, usandos a fórmula `L = -Σ y · log(ŷ)`, que em código virou:
+
+```python
+def cross_entropy(Yv, Yp):
+    Yp = np.clip(Yp, 1e-8, 1 - 1e-8)        # evita log(0)
+    return -np.mean(np.sum(Yv * np.log(Yp), axis=1))
+```
+
+O `clip` protege contra `log(0)` que resultaria em infinito.
+
+### 2.2.4 Backpropagation 
+
+Já em `network.py`, usamos a simplificação `ŷ - y`, que é o ponto de entrada do backprop. De lá, a regra da cadeia se propaga para trás:
+
+```python
+delta = self.a_values[-1] - y_true          # gradiente da saída: ŷ - y
+
+grads_W[i] = self.a_values[i].T @ delta / N # dL/dW
+delta = delta @ self.weights[i].T * relu_derivative(self.z_values[i - 1])
+#              ─────────────────── ─ ───────────────────────────────────
+#              propaga pelo peso (@)   aplica derivada da ReLU (*)
+```
+
+O `@` é produto matricial, propaga o gradiente pela camada. O `*` é multiplicação element-wise e aplica a derivada da ReLU em cada neurônio individualmente. Trocar um pelo outro é o erro mais silencioso possível: o código roda, mas a rede não aprende.
+
+
+### 2.2.5 SGD e loop de treino 
+
+A atualização `W = W - lr * dW` está em `SGD.atualizar`. O embaralhamento e os mini-batches estão em `treinar`:
+
+```python
+indices = np.random.permutation(N)          # embaralha a cada época
+X_embaralhado = X[indices]
+
+for inicio in range(0, N, tamanho_lote):    # itera em mini-batches
+    X_lote = X_embaralhado[inicio:inicio + tamanho_lote]
+    ...
+    rede.weights[i] -= taxa_aprendizado * grads_W[i]  # W = W - lr * dW
+```
+
+
 ## 3. Como rodar
 
 ```bash
