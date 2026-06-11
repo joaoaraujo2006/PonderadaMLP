@@ -76,9 +76,6 @@ W = W - taxa_aprendizado * dW
 
 Em vez de calcular o gradiente com todos os dados de uma vez (o que seria lento), usamos mini-batches: pequenos subconjuntos dos dados a cada passo. Isso torna o treinamento mais rápido e o gradiente mais ruidoso, o que paradoxalmente ajuda a rede a escapar de mínimos locais ruins.
 
-
-
-
 ## Como rodar
 
 ```bash
@@ -94,7 +91,6 @@ pip install -r requirements.txt
 jupyter notebook notebooks/experimentos.ipynb
 ```
 
-
 ## Arquitetura escolhida
 
 **Configuração final:** `[784 → 128 → 64 → 10]`
@@ -108,16 +104,14 @@ jupyter notebook notebooks/experimentos.ipynb
 
 **Por que essas escolhas:**
 
-- **784 entradas:** imagens 28×28 achatadas em vetor
-- **ReLU nas camadas ocultas:** não sofre com o problema de gradiente que desaparece como a sigmoid, e sua derivada é simples (0 ou 1), o que torna o backprop eficiente
+- **784 entradas:** imagens 28×28 achatadas em vetor.
+- **ReLU nas camadas ocultas:** não sofre com o problema de gradiente que desaparece como a sigmoid, e sua derivada é simples (0 ou 1), o que torna o backprop eficiente.
 - **Softmax na saída:** converte logits em probabilidades somando 1, combinado com cross-entropy produz um gradiente limpo: `ŷ - y`
 - **He initialization:** pesos inicializados com `N(0, √(2/n))` — projetado especificamente para ReLU evitar saturação nas primeiras épocas
 - **128 e 64 neurônios:** capacidade suficiente para aprender as features do MNIST sem overfitting excessivo
 
 
 ## Resultados
-
-
 
 ### Curva de loss e acurácia
 
@@ -127,26 +121,24 @@ jupyter notebook notebooks/experimentos.ipynb
 
 | Configuração | Acurácia Teste |
 |---|---|
-| Baseline `[784,128,64,10]` lr=0.01 | XX.XX% |
-| Maior learning rate lr=0.1 | XX.XX% |
-| Rede maior `[784,256,128,10]` lr=0.01 | XX.XX% |
-| Lote menor batch=32 | XX.XX% |
-
----
+| Baseline `[784,128,64,10]` lr=0.01 | 96.73% |
+| Maior learning rate lr=0.1 | 97.91% |
+| Rede maior `[784,256,128,10]` lr=0.01 | 96.83% |
+| Lote menor batch=32 | 96.83% |
 
 ## Decisões e dificuldades
 
 ### Qual foi a decisão técnica mais difícil que tomei?
 
-<!-- Escreva aqui em primeira pessoa. Exemplo de resposta honesta:
-A decisão mais difícil foi a inicialização dos pesos. Na primeira tentativa inicializei tudo com zero
-e a rede não aprendia nada — todos os neurônios calculavam o mesmo gradiente e evoluíam de forma idêntica.
-Isso se chama "symmetry breaking problem". Migrei para He initialization (pesos aleatórios escalados por
-√(2/n)) e a rede passou a convergir normalmente. -->
+A decisão mais difícil foi escolher os pesos no primeiro aprendizado da rede. Iniciar tudo simplesmente com zero faz com que a rede inteira calcule o mesmo gradiente.
+
+Como solução, escolhi usar a função sqrt que He initialization que define pesos aleatórios escalados por √(2/n), onde n é o número de entradas da camada. O fator √(2/n) evita que esses valores iniciais sejam grandes demais e causem outro problema.
 
 ### O que tentei que não funcionou?
 
-Tentei aumentar a quantidade de épocas 
+Tentei aumentar a quantidade de épocas de aprendizado completo do modelo para 100. O que aumentou a acurácia do modelo no treino para 99%, mas aumentou o tempo de execução exponencialmente, o que atrapalha muito quando estamos fazendo iterações no projeto.
+
+Outra coisa foi definir learningRate (taxa de aprendizado) para 0.01, mas o modelo estava com aprendizado mais demorado e com menor acurácia. Quando eu aumentei para 0.1, o modelo apresentou resultados muito melhores, com acurácia de 97,91 para 0.1 e 96.65 para 0.01.
 
 ### Se fosse refazer do zero, o que faria diferente?
 
@@ -156,7 +148,6 @@ Tentei aumentar a quantidade de épocas
 ## Estrutura do repositório
 
 ```
-.
 ├── README.md
 ├── mlp/
 │   ├── __init__.py
