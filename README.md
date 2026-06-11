@@ -104,11 +104,15 @@ jupyter notebook notebooks/experimentos.ipynb
 
 **Por que essas escolhas:**
 
-- **784 entradas:** imagens 28×28 achatadas em vetor.
-- **ReLU nas camadas ocultas:** não sofre com o problema de gradiente que desaparece como a sigmoid, e sua derivada é simples (0 ou 1), o que torna o backprop eficiente.
-- **Softmax na saída:** converte logits em probabilidades somando 1, combinado com cross-entropy produz um gradiente limpo: `ŷ - y`
-- **He initialization:** pesos inicializados com `N(0, √(2/n))` — projetado especificamente para ReLU evitar saturação nas primeiras épocas
-- **128 e 64 neurônios:** capacidade suficiente para aprender as features do MNIST sem overfitting excessivo
+**784 entradas**: cada imagem é 28×28 pixels. A rede não entende imagens 2D, então achatamos tudo em uma linha de 784 números. Cada número é o brilho de um pixel, de 0 (preto) a 1 (branco).
+
+**ReLU nas camadas ocultas**: a função de ativação decide se um neurônio "dispara" ou não. A ReLU é simples: se o valor for negativo, vira zero; se for positivo, passa como está. Isso resolve um problema grave da sigmoid — quando a rede é funda, o gradiente ia encolhendo a cada camada até sumir, e os primeiros pesos paravam de aprender. Com ReLU isso não acontece.
+
+**Softmax na saída:** a última camada produz 10 números, um por dígito. O problema é que esses números podem ser qualquer coisa, 3.2, -1.5, 8.7. A softmax transforma tudo em probabilidades que somam 1. Aí dá para interpretar: "a rede acha que é um 7 com 85% de certeza".
+
+**He initialization:** os pesos começam aleatórios, mas escalados por √(2/n). Sem esse fator, os valores podem ser grandes demais e as ativações explodem já na primeira passada. Com ele, os valores chegam na última camada ainda com magnitudes razoáveis e o treinamento começa estável.
+
+**128 e 64 neurônios:** a primeira camada oculta aprende padrões simples , bordas, curvas, traços. A segunda combina esses padrões em formas mais complexas. Ir de 128 para 64 cria um funil: a rede é forçada a comprimir a informação, guardando só o que é relevante para distinguir os dígitos.
 
 
 ## Resultados
