@@ -142,8 +142,7 @@ Outra coisa foi definir learningRate (taxa de aprendizado) para 0.01, mas o mode
 
 ### Se fosse refazer do zero, o que faria diferente?
 
-
-
+Durante o treino eu calculava a acurácia no conjunto de treino inteiro a cada época. Isso é lento e mistura duas coisas diferentes: o quanto a rede está aprendendo vs. o quanto ela está generalizando. Teria criado uma função separada desde o começo que avalia só no conjunto de validação, sem misturar com o loop de treino.
 
 ## Estrutura do repositório
 
